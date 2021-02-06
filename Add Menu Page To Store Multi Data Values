@@ -1,0 +1,80 @@
+<?php
+
+// Register a custom menu page.
+function delivery_area_settings_register(){
+  add_menu_page( __( 'Delivery Area', 'fablekitchen' ), __( 'Delivery Area', 'fablekitchen' ), 'manage_options', 'delivery_area_setting_page', 'delivery_area_setting_page', 'dashicons-image-filter', 50 );
+} add_action( 'admin_menu', 'delivery_area_settings_register' );
+
+// Display a custom menu page
+function delivery_area_setting_page() { ?><div class="wrap">
+
+  <h2><?php echo __( 'Delivery Area Setting', 'fablekitchen' ); ?></h2>
+
+  <?php if(isset($_POST["submit"])) { // ISSET BTN
+
+		// VAR
+			$delivery_area_state = $_POST["delivery_area_state"];
+			$delivery_area_price  = $_POST["delivery_area_price"];
+		// VAR
+
+    // Update
+		update_option("delivery_area_state", $delivery_area_state);
+		update_option("delivery_area_price", $delivery_area_price);
+    // Update
+
+    // Success Message
+    echo '<div class="updated"><p>Save Settings</p><button type="button" class="notice-dismiss vc-notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button></div>';
+    // Success Message
+
+	} // ISSET BTN ?>
+
+  <form action="" method="post">
+
+    <table class="form-table" role="presentation"><tbody id="add_item_form">
+
+      <tr>
+        <td scope="row"><strong><?php echo __('Delivery Area State', 'fablekitchen'); ?></strong></td>
+        <td scope="row"><strong><?php echo __('Delivery Area Price', 'fablekitchen'); ?></strong></td>
+        <td scope="row"><strong><?php echo __('Remove', 'fablekitchen'); ?></strong></td>
+      </tr>
+
+      <?php // Delivery Area Loop
+      $delivery_area_state = get_option("delivery_area_state"); // State
+      $delivery_area_price = get_option("delivery_area_price"); // Price
+      $limit = count($delivery_area_state); // Count
+      if( is_array($delivery_area_state) && count($delivery_area_state) > 0 ) { for($x=0; $x<$limit; $x++) { ?>
+
+        <tr>
+            <td><input name="delivery_area_state[]" type="text" id="delivery_area_state" value="<?php echo $delivery_area_state[$x]; ?>" class="regular-text"></td>
+            <td><input name="delivery_area_price[]" type="text" id="delivery_area_price" value="<?php echo $delivery_area_price[$x]; ?>" class="regular-text"></td>
+            <td><div onclick="remove_item(jQuery(this));" class="button button-primary"><?php echo __("Remove", "fablekitchen"); ?></div></td>
+        </tr>
+
+      <?php } } // Delivery Area Loop ?>
+
+    </tbody></table>
+
+    <div id="add_item" class="button button-primary"><?php echo __('Add New', 'fablekitchen'); ?></div>
+
+    <p class="submit"><input type="submit" name="submit" id="submit" class="button button-primary" value="<?php echo __('Save Changes', 'fablekitchen'); ?>" /></p>
+
+  </form>
+
+  <script type="text/javascript">
+
+    // This function help to rmeove the item
+    function remove_item($this) { if(confirm("Are you sure to remove it?")) { $this.parent().parent().remove(); } }
+
+    jQuery(document).ready(function() { jQuery("#add_item").click(function() {
+      var html  = '';
+          html += '<tr>';
+          html +=   '<td><input name="delivery_area_state[]" type="text" id="delivery_area_state" value="" class="regular-text"></td>';
+          html +=   '<td><input name="delivery_area_price[]" type="text" id="delivery_area_price" value="" class="regular-text"></td>';
+          html +=   '<td><div onclick="remove_item(jQuery(this));" class="button button-primary"><?php echo __("Remove", "fablekitchen"); ?></div></td>';
+          html += '</tr>';
+      jQuery("#add_item_form").append(html);
+    }); });
+
+  </script>
+
+</div><?php }
