@@ -1,0 +1,17 @@
+<?php
+
+$args = array( "user_email" => $line[3] );
+
+$user_query = new WP_User_Query( $args );
+
+if ( ! empty( $user_query->get_results() ) ) { // If User Exists
+
+  foreach ( $user_query->get_results() as $user ) { // User Loop
+ 
+    $user_exists = $user->ID;
+  
+  } // User Loop
+
+} // If User Exists
+
+?>
