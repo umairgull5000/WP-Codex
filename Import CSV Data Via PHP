@@ -1,0 +1,95 @@
+<?php
+
+// Register a custom menu page.
+function import_candidate_csv_settings_register(){
+  add_menu_page( __( 'Import Candidate CSV', 'gsh' ), __( 'Import Candidate CSV', 'gsh' ), 'manage_options', 'import_candidate_csv_setting_page', 'import_candidate_csv_setting_page', 'dashicons-image-filter', 50 );
+} add_action( 'admin_menu', 'import_candidate_csv_settings_register' );
+
+// Display a custom menu page
+function import_candidate_csv_setting_page() { ?><div class="wrap">
+
+  <h2><?php echo __( 'Import Candidate CSV', 'gsh' ); ?></h2>
+
+  <style type="text/css">
+    .grid { display: grid; grid-template-columns: 1fr; grid-gap: 15px; margin: 30px auto; }
+    table { padding: 0; margin: 0; table-layout: auto; background: #fff; width: 100%; border: 0; }
+    table td { padding: 10px; word-break: keep-all; }
+  </style>
+
+  <?php if(isset($_POST["submit"])) { // ISSET BTN
+
+    // Import CSV
+    if ( isset($_FILES["file"])) {
+
+      //if there was an error uploading the file
+      if ($_FILES["file"]["error"] > 0) {
+
+        // file have Error
+        echo "Return Code: " . $_FILES["file"]["error"] . "<br />";
+        // file have Error
+
+      } else {
+
+        //Print file details
+        // echo "Upload: " . $_FILES["file"]["name"] . "<br />";
+        // echo "Type: " . $_FILES["file"]["type"] . "<br />";
+        // echo "Size: " . ($_FILES["file"]["size"] / 1024) . " Kb<br />";
+        // echo "Temp file: " . $_FILES["file"]["tmp_name"] . "<br />";
+        //Print file details
+
+        //if file already exists
+        if (file_exists("upload/" . $_FILES["file"]["name"])) {
+          echo $_FILES["file"]["name"] . " already exists. ";
+        } else {
+
+          // Open file and print it
+          $file = fopen($_FILES["file"]["tmp_name"], 'r');
+          // if( fgetcsv($file) !== FALSE ) {
+            echo '<table>';
+            while (($line = fgetcsv($file)) !== FALSE) {
+              // $line is an array of the csv elements
+              // print_r($line);
+              echo '<tr>';
+                foreach( $line as $l ) { echo '<td>'.$l.'</td>'; }
+              echo '</tr>';
+              // $line is an array of the csv elements
+            }
+            echo '</table>';
+            fclose($file);
+          // }
+          // Open file and print it
+
+        }
+        //if file already exists
+
+      }
+      //if there was an error uploading the file
+
+    } else {
+
+      // Error -- No file
+      echo "No file selected <br />";
+      // Error -- No file
+
+    }
+    // Import CSV
+
+    // Success Message
+    echo '<div class="updated"><p>'.__("Import Candidate Success", "gsh").'</p><button type="button" class="notice-dismiss vc-notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button></div>';
+    // Success Message
+
+	} else { // ELSE // ISSET BTN ?>
+
+    <form action="" method="post" class="grid" enctype="multipart/form-data">
+
+      <label for="file"><strong><?php echo __("Import Candidate CSV", "gsh"); ?></strong></label>
+
+      <input type="file" id="file" name="file" value="" accept=".csv" />
+
+      <p class="submit"><input type="submit" name="submit" id="submit" class="button button-primary" value="<?php echo __('Save Changes', 'gsh'); ?>" /></p>
+
+    </form>
+
+  <?php } // ELSE // ISSET BTN ?>
+
+</div><?php }
