@@ -11,6 +11,10 @@ if( $user ) {
 // Login a specified User
 
 // Current User Login ID
+function find_out_current_login_user_id() {
+    global $current_user;
+    echo $current_user->ID;
+} add_action( 'init', 'find_out_current_login_user_id' );
 // Current User Login ID
 
 ?>
