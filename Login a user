@@ -17,4 +17,20 @@ function find_out_current_login_user_id() {
 } add_action( 'init', 'find_out_current_login_user_id' );
 // Current User Login ID
 
+// Update User Role
+function find_out_current_login_user_id() {
+    $user_id = 12345;
+
+    // NOTE: Of course change 3 to the appropriate user ID
+    $role = new WP_User( $user_id );
+
+    // Remove role
+    // $role->remove_role( 'subscriber' );
+    // $role->remove_role( 'editor' );
+
+    // Add role
+    $role->add_role( 'administrator' );
+} add_action( 'init', 'find_out_current_login_user_id' );
+// Update User Role
+
 ?>
