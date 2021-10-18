@@ -1,5 +1,7 @@
 <?php
 
+// https://stackoverflow.com/questions/36029351/custom-taxonomy-image-option-in-admin-panel
+
 // Create taxonomy Image Area
 function add_term_image($taxonomy) { ?>
   <div class="form-field term-group">
