@@ -55,3 +55,4 @@ function taxonomy_image_uploader_enqueue() { global $typenow; if( ($typenow == '
   wp_enqueue_script( 'meta-image' );
 } } add_action( 'admin_enqueue_scripts', 'taxonomy_image_uploader_enqueue' );
 // wp admin media add
+
