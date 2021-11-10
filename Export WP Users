@@ -1,0 +1,102 @@
+<?php
+
+// https://api.stripe.com/v1/customers/cus_G5AubwXkdN0bLB/sources - customer save card api link
+
+/**
+ * Register a custom menu page.
+ */
+function export_user_admin_page() {
+  add_users_page(
+		__( 'Export', 'spp' ),
+		__( 'Export', 'spp' ),
+		'manage_options',
+		'export_user',
+		'export_user'
+	);
+} add_action( 'admin_menu', 'export_user_admin_page' );
+
+/**
+ * Display a custom menu page
+ */
+function export_user() { ?><div class="wrap">
+
+  <h2><?php echo __( 'Export User Details', 'spp' ); ?></h2>
+
+  <p>
+    <a class="button button-primary" id="export_it" href="#"><?php echo __("Export It"); ?></a>
+  </p>
+
+  <table class="wp-list-table widefat fixed striped table-view-list users">
+    <thead>
+      <tr>
+        <th>User ID</th>
+        <th>User Name</th>
+        <th>User Email</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php // WP User Query
+        $args = array("number" => -1);
+        $user_query = new WP_User_Query( $args );
+        if ( ! empty( $user_query->get_results() ) ) { // If User Exists
+          foreach ( $user_query->get_results() as $user ) { // User Loop
+            $user_id = $user->ID;
+            $user_name = $user->first_name . " " . $user->last_name;
+            $user_email = $user->user_email;
+      // WP User Query ?>
+      <tr>
+        <td><?php echo $user_id; ?></td>
+        <td><?php echo $user_name; ?></td>
+        <td><?php echo $user_email; ?></td>
+      </tr>
+      <?php // WP User Query
+          } // User Loop
+        } // If User Exists
+      // WP User Query ?>
+    </tbody>
+  </table>
+
+
+  <script>
+    function htmlToCSV(html, filename) {
+      var data = [];
+      var rows = document.querySelectorAll("table tr");
+          
+      for (var i = 0; i < rows.length; i++) {
+        var row = [], cols = rows[i].querySelectorAll("td, th");
+            
+        for (var j = 0; j < cols.length; j++) {
+                row.push(cols[j].innerText);
+            }
+                
+        data.push(row.join(",")); 		
+      }
+
+      downloadCSVFile(data.join("\n"), filename);
+    }
+
+    function downloadCSVFile(csv, filename) {
+      var csv_file, download_link;
+
+      csv_file = new Blob([csv], {type: "text/csv"});
+
+      download_link = document.createElement("a");
+
+      download_link.download = filename;
+
+      download_link.href = window.URL.createObjectURL(csv_file);
+
+      download_link.style.display = "none";
+
+      document.body.appendChild(download_link);
+
+      download_link.click();
+    }
+
+    document.getElementById("export_it").addEventListener("click", function () {
+      var html = document.querySelector("table").outerHTML;
+      htmlToCSV(html, "export.csv");
+    });
+  </script>
+
+</div><?php }
