@@ -1,0 +1,101 @@
+<?php
+
+// https://api.stripe.com/v1/customers/cus_G5AubwXkdN0bLB/sources - customer save card api link
+
+/**
+ * Register a custom menu page.
+ */
+function export_post_type_admin_page() {
+  add_submenu_page(
+    'edit.php?post_type=post',
+		__( 'Export', 'spp' ),
+		__( 'Export', 'spp' ),
+		'manage_options',
+		'export_post_type',
+		'export_post_type'
+	);
+} add_action( 'admin_menu', 'export_post_type_admin_page' );
+
+/**
+ * Display a custom menu page
+ */
+function export_post_type() { ?><div class="wrap">
+
+  <h2><?php echo __( 'Export Details', 'spp' ); ?></h2>
+
+  <p>
+    <a class="button button-primary" id="export_it" href="#"><?php echo __("Export It"); ?></a>
+  </p>
+
+  <table class="wp-list-table widefat fixed striped table-view-list users">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Title</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php // WP Query
+        $args = array(
+          "post_type" => "post",
+          "post_status" => "publish",
+          "posts_per_page" => -1,
+        );
+        $the_query = new WP_Query( $args );
+        if ( $the_query->have_posts() ) {
+          while ( $the_query->have_posts() ) { $the_query->the_post();
+      // WP Query ?>
+      <tr>
+        <td><?php the_ID(); ?></td>
+        <td><?php the_title(); ?></td>
+      </tr>
+      <?php // WP User Query
+          } // User Loop
+        } // If User Exists
+      // WP User Query ?>
+    </tbody>
+  </table>
+
+  <script>
+    function htmlToCSV(html, filename) {
+      var data = [];
+      var rows = document.querySelectorAll("table tr");
+          
+      for (var i = 0; i < rows.length; i++) {
+        var row = [], cols = rows[i].querySelectorAll("td, th");
+            
+        for (var j = 0; j < cols.length; j++) {
+                row.push(cols[j].innerText);
+            }
+                
+        data.push(row.join(",")); 		
+      }
+
+      downloadCSVFile(data.join("\n"), filename);
+    }
+
+    function downloadCSVFile(csv, filename) {
+      var csv_file, download_link;
+
+      csv_file = new Blob([csv], {type: "text/csv"});
+
+      download_link = document.createElement("a");
+
+      download_link.download = filename;
+
+      download_link.href = window.URL.createObjectURL(csv_file);
+
+      download_link.style.display = "none";
+
+      document.body.appendChild(download_link);
+
+      download_link.click();
+    }
+
+    document.getElementById("export_it").addEventListener("click", function () {
+      var html = document.querySelector("table").outerHTML;
+      htmlToCSV(html, "export.csv");
+    });
+  </script>
+
+</div><?php }
